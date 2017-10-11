@@ -34,13 +34,21 @@ void printMAC(u_int8_t *mac_addr) {
 		if(i == 4)	printf("%02x\n", mac_addr[i++]);
 	}
 }
+void printIP(u_int8_t *ip_addr) {
+	int i;
+
+	for(i=0;i<4;i++) {
+		printf("%d.", ip_addr[i]);
+		if(i == 2)	printf("%d\n", ip_addr[i++]);
+	}
+}
 
 void ARPBroadcast(u_int8_t *src_mac, u_int8_t *src_ip, u_int8_t *dst_ip, u_int16_t opcode, pcap_t *handle) {
 	struct arp_packet *apkt;
 	unsigned char *packet;
 
-	apkt   = (struct arp_packet *)malloc(sizeof(arp_packet));
-	packet = (unsigned char*)malloc(sizeof(arp_packet));
+	apkt   = (struct arp_packet *)malloc(sizeof(struct arp_packet));
+	packet = (unsigned char *)malloc(sizeof(struct arp_packet));
 
 	memcpy(apkt->ether_dhost, "\xff\xff\xff\xff\xff\xff", ETHER_ADDR_LEN);
 	memcpy(apkt->ether_shost, src_mac, ETHER_ADDR_LEN);
@@ -57,7 +65,7 @@ void ARPBroadcast(u_int8_t *src_mac, u_int8_t *src_ip, u_int8_t *dst_ip, u_int16
 	memcpy(apkt->dst_hw_addr, "\x00\x00\x00\x00\x00\x00", ETHER_ADDR_LEN);
 	memcpy(apkt->dst_ip_addr, dst_ip, IP_ADDR_LEN);
 
-	memcpy(packet, apkt, sizeof(arp_packet));
+	memcpy(packet, apkt, sizeof(struct arp_packet));
 	free(apkt);
 
 	pcap_sendpacket(handle, packet, sizeof(packet));
@@ -68,8 +76,8 @@ void ARPReply(u_int8_t *src_mac, u_int8_t *dst_mac, u_int8_t *src_ip, u_int8_t *
 	struct arp_packet *apkt;
 	unsigned char *packet;
 
-	apkt   = (struct arp_packet *)malloc(sizeof(arp_packet));
-	packet = (unsigned char*)malloc(sizeof(arp_packet));
+	apkt   = (struct arp_packet *)malloc(sizeof(struct arp_packet));
+	packet = (unsigned char *)malloc(sizeof(struct arp_packet));
 
 	memcpy(apkt->ether_dhost, dst_mac, ETHER_ADDR_LEN);
 	memcpy(apkt->ether_shost, src_mac, ETHER_ADDR_LEN);
@@ -86,7 +94,7 @@ void ARPReply(u_int8_t *src_mac, u_int8_t *dst_mac, u_int8_t *src_ip, u_int8_t *
 	memcpy(apkt->dst_hw_addr, dst_mac, ETHER_ADDR_LEN);
 	memcpy(apkt->dst_ip_addr, dst_ip, IP_ADDR_LEN);
 
-	memcpy(packet, apkt, sizeof(arp_packet));
+	memcpy(packet, apkt, sizeof(struct arp_packet));
 	free(apkt);
 
 	pcap_sendpacket(handle, packet, sizeof(packet));
@@ -94,6 +102,7 @@ void ARPReply(u_int8_t *src_mac, u_int8_t *dst_mac, u_int8_t *src_ip, u_int8_t *
 }
 
 void GetMAC2(u_int8_t *src_mac, u_int8_t *dst_mac, u_int8_t *src_ip, u_int8_t *dst_ip, pcap_t *handle) {
-	struct pcap_pkthdr *header;
 	struct arp_packet *apkt;
+	struct pcap_pkthdr *header;
+	const u_char *packet;
 }
