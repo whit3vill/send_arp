@@ -10,8 +10,7 @@ int main (int argc, char *argv[]) {
 	u_int8_t attacker_ip[IP_ADDR_LEN];
 	u_int8_t target_mac[ETHER_ADDR_LEN];
 	u_int8_t target_ip[IP_ADDR_LEN];
-
-	struct pcap_pkthdr *header;
+	
 	struct arp_packet *apkt;
 
 	inet_pton(AF_INET, argv[2], sender_ip);
@@ -22,9 +21,11 @@ int main (int argc, char *argv[]) {
 
 	printf("Attacker's MAC: ");
 	printMAC(attacker_mac);
-	printf("Attacker's IP : %s\n", inet_ntoa(attacker_ip));
+	printf("Attacker's IP : ");
+	printIP(attacker_ip);
 
 	handle = pcap_open_live(interface, BUFSIZ, 1, 1000, errbuf);
-	ARPBroadcast(packet, attacker_mac, attacker_ip, sender_ip, ARPOP_REQUEST);
-	pcap_sendpacket(handle, packet, 60);
+
+	ARPBroadcast(attacker_mac, attacker_ip, sender_ip, ARPOP_REQUEST, handle);
+
 }
