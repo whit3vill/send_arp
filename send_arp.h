@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <pcap.h>
-#include <libdnet/arp.h>
+//#include <libdnet/arp.h>
 #include <netinet/if_ether.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -13,7 +13,9 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-struct arp_pkt {
+#define IP_ADDR_LEN 4
+
+struct arp_packet {
     u_char ether_dhost[6];
     u_char ether_shost[6];
     u_short ether_type;               

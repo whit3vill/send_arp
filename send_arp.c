@@ -35,10 +35,12 @@ void printMAC(u_int8_t *mac_addr) {
 	}
 }
 
-void ARPBroadcast(u_int8_t *packet, u_int8_t *src_mac, u_int8_t *src_ip, u_int8_t *dst_ip, u_int16_t opcode) {
+void ARPBroadcast(u_int8_t *src_mac, u_int8_t *src_ip, u_int8_t *dst_ip, u_int16_t opcode, pcap_t *handle) {
 	struct arp_packet *apkt;
+	unsigned char *packet;
 
-	apkt = (struct arp_packet *)malloc(sizeof(struct arp_packet));
+	apkt   = (struct arp_packet *)malloc(sizeof(arp_packet));
+	packet = (unsigned char*)malloc(sizeof(arp_packet));
 
 	memcpy(apkt->ether_dhost, "\xff\xff\xff\xff\xff\xff", ETHER_ADDR_LEN);
 	memcpy(apkt->ether_shost, src_mac, ETHER_ADDR_LEN);
@@ -55,14 +57,19 @@ void ARPBroadcast(u_int8_t *packet, u_int8_t *src_mac, u_int8_t *src_ip, u_int8_
 	memcpy(apkt->dst_hw_addr, "\x00\x00\x00\x00\x00\x00", ETHER_ADDR_LEN);
 	memcpy(apkt->dst_ip_addr, dst_ip, IP_ADDR_LEN);
 
-	memcpy(packet, epkt, sizeof(struct arp_packet));
+	memcpy(packet, apkt, sizeof(arp_packet));
 	free(apkt);
+
+	pcap_sendpacket(handle, packet, sizeof(packet));
+	free(packet);
 }
 
-void ARPReply(u_int8_t *packet, u_int8_t *src_mac, u_int8_t *dst_mac, u_int8_t *src_ip, u_int8_t *dst_ip, u_int16_t opcode) {
+void ARPReply(u_int8_t *src_mac, u_int8_t *dst_mac, u_int8_t *src_ip, u_int8_t *dst_ip, u_int16_t opcode, pcap_t *handle) {
 	struct arp_packet *apkt;
+	unsigned char *packet;
 
-	apkt = (struct arp_packet *)malloc(sizeof(struct arp_packet));
+	apkt   = (struct arp_packet *)malloc(sizeof(arp_packet));
+	packet = (unsigned char*)malloc(sizeof(arp_packet));
 
 	memcpy(apkt->ether_dhost, dst_mac, ETHER_ADDR_LEN);
 	memcpy(apkt->ether_shost, src_mac, ETHER_ADDR_LEN);
@@ -79,7 +86,14 @@ void ARPReply(u_int8_t *packet, u_int8_t *src_mac, u_int8_t *dst_mac, u_int8_t *
 	memcpy(apkt->dst_hw_addr, dst_mac, ETHER_ADDR_LEN);
 	memcpy(apkt->dst_ip_addr, dst_ip, IP_ADDR_LEN);
 
-	memcpy(packet, epkt, sizeof(struct arp_packet));
-
+	memcpy(packet, apkt, sizeof(arp_packet));
 	free(apkt);
+
+	pcap_sendpacket(handle, packet, sizeof(packet));
+	free(packet);
+}
+
+void GetMAC2(u_int8_t *src_mac, u_int8_t *dst_mac, u_int8_t *src_ip, u_int8_t *dst_ip, pcap_t *handle) {
+	struct pcap_pkthdr *header;
+	struct arp_packet *apkt;
 }
