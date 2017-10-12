@@ -20,7 +20,7 @@ struct arp_packet {
     u_char ether_shost[6];
     u_short ether_type;               
 
-	u_int16_t hw_type;
+    u_int16_t hw_type;
     u_int16_t ip_type;
     u_int8_t hw_len;
     u_int8_t ip_len;
@@ -30,3 +30,10 @@ struct arp_packet {
     u_int8_t dst_hw_addr[6];
     u_int8_t dst_ip_addr[4];
 };
+
+void GetMAC(uint8_t *mac_addr, uint8_t *interface);
+void GetIP(uint8_t *ip_addr, uint8_t *interface);
+void printMAC(uint8_t *mac_addr);
+void printIP(uint8_t *ip_addr);
+void SendARP(uint8_t *src_mac, uint8_t *src_ip, uint8_t *dst_mac, uint8_t *dst_ip, u_int16_t opcode, pcap_t *handle);
+void GetMAC2(pcap_t *handle, uint8_t *tmp);
